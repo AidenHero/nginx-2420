@@ -12,8 +12,18 @@ First you will download the hello-server file (in this folder) onto your host co
 
 Next you will connect with your linux machine with sftp (ran on your host computer)
 
-Replace the IP with your own machines IP
+Replace the IP with your own machines IP, and the user with your own username. This is how you would connect.
 
 ```shell
 sftp -i ~/.ssh/do-key aiden@64.23.155.88
 ```
+
+once in sftp, you will be downloading the hello-server file onto your computer with put. Change the file path to where hello-server is located on your computer, but here is an example
+
+```shell
+put C:\Users\dell\Documents\term2\asignment3part1\assignment3p2/hello-server
+```
+
+Congrats! You have now moved the file onto your linux server.
+
+## Step 2 - WIP
