@@ -70,6 +70,12 @@ Next we will allow http (in order for the website to still exist)
 sudo ufw allow http
 ```
 
+We will also allow 8080 that we will be using later
+
+```bash
+sudo ufw allow 8080
+```
+
 Great! now we have everything necessary to turn it on! Run the command to turn it on, make sure you enabled SSH
 
 ```bash
@@ -100,5 +106,39 @@ Next we are going to move the file we downloaded (will be in your users home dir
 sudo mv /home/aiden/hello-server /web/binary_backend/hello-server
 ```
 
+Now we are going to make a service out of this file. First we will create the file
 
+```bash
+sudo vim /etc/systemd/system/hello-server.service
+```
 
+Next are the contents of this file
+```bash
+[Unit]
+Description=hello_server
+
+[Service]
+Type=oneshot
+ExecStart=/web/binary_backend/hello-server
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Now that we have made the service file and its in the correct location, we will reload services with this command
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Then we are going to start the service
+
+```bash
+sudo systemctl start hello-server.service
+```
+
+next we are going to enable the service, so it'll always run on start up.
+
+```bash
+sudo systemctl enable hello-server.service
+```
