@@ -113,12 +113,12 @@ sudo vim /etc/systemd/system/hello-server.service
 ```
 
 Next are the contents of this file
+
 ```bash
 [Unit]
 Description=hello_server
 
 [Service]
-Type=oneshot
 ExecStart=/web/binary_backend/hello-server
 
 [Install]
@@ -131,6 +131,12 @@ Now that we have made the service file and its in the correct location, we will 
 sudo systemctl daemon-reload
 ```
 
+Next we will give executable rights to the hello-server
+
+```bash
+chmod +x /web/binary_backend/hello-server
+```
+
 Then we are going to start the service
 
 ```bash
@@ -141,4 +147,68 @@ next we are going to enable the service, so it'll always run on start up.
 
 ```bash
 sudo systemctl enable hello-server.service
+```
+
+## step 4 - Adding the reverse proxy
+
+Now we are going to add the reverse proxy to our website!
+
+```bash
+sudo vim /etc/nginx/sites-available/nginx-2420
+```
+
+
+And we will be changing the contents of the file into this to allow reverse proxy.
+
+```bash
+server {
+    listen 80;
+    listen [::]:80;
+    root /web/html/nginx-2420;
+    location / {
+        index index.php index.html index.htm;
+    }
+location /hey {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+location /echo {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Now we will restart nginx with this command:
+
+```bash
+sudo systemctl restart nginx
+```
+
+Congrats it should be all running!
+
+
+## step 5 - Testing the reverse proxy
+
+I will be using postman for these tests
+
+First i sent a get request to the website and the response should look like "Hey there". An image will be included called hey_test.png. Remember to use your ip address!
+
+```
+64.23.155.88/hey
+```
+
+Next i sent a post request to the website and the response should look like whatever you set the body of your request is. A screenshot will be included called echo_test.png. It will echo back whatever you send the contents of your request as.
+
+```
+64.23.155.88/echo
 ```
